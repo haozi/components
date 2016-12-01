@@ -28,7 +28,8 @@ npm run dev 会启动一个 http server,
 * build 构建线上代码时会禁用 alert 和 debugger，dev 模式下不禁止
 * 如果希望对规则进行更改，可调整 .eslintrc.js。 以允许使用分号为例：
 
-> ```
+	```
 'semi': 2 // 2 为 error，1 为 warning, 0 为不检测， 重启 npm 生效
-```
+	```
+
 * 希望跳过部分文件检测，可配置 .eslintignore, 语法和 .gitignore 一致

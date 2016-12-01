@@ -10,7 +10,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "PORT=8080; npm run clean && webpack-dev-server --progress --config .config/webpack.dev.config.js --hot --inline --host 127.0.0.1 --port $PORT",
-    "build": "NODE_ENV=production npm run clean && npm run lint && rollup -c .config/rollup.config.js",
+    "build": "NODE_ENV=production npm run clean && npm run lint && node .config/rollup.config.js",
     "lint": "eslint --ext .js,.vue src test/*_spec.js",
     "test": "npm run build && nyc ava ./test/*_spec.js",
     "clean": "rm -rf dist .nyc_output coverage; mkdir dist",
