@@ -4,7 +4,7 @@ const path = require('path')
 const nodeDir = path.resolve(__dirname, '../node_modules')
 const projectRoot = path.resolve(__dirname, '../')
 const autoprefixer = require('autoprefixer')
-console.log(path.resolve(projectRoot, './test/browser.js'))
+
 module.exports = {
   entry: config.browser,
   output: {

@@ -1,6 +1,9 @@
 # 模块开发脚手架
 > 模块开发脚手架，生成单一dist/index.js 和 dist/index.css
 
+[![dependencies Status](https://david-dm.org/haozime/components/status.svg)](https://david-dm.org/haozime/components)
+[![devDependencies Status](https://david-dm.org/haozime/components/dev-status.svg)](https://david-dm.org/haozime/components?type=dev)
+
 ## 使用方法
 
 ```
