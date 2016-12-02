@@ -3,8 +3,8 @@ const gitV = getGitVersion()
 const pkgV = getPkgVersion()
 const xyzReg = /^\d+\.\d+\.\d+$/
 
-if(xyzReg.test(gitV)) {
-  if(gitV !== pkgV) {
+if (xyzReg.test(gitV)) {
+  if (gitV !== pkgV) {
     showError(new Error([
       `package.json 中版本号与 git 分支版本号不一致 \n`,
       `pkgVersion: ${pkgV}, gitVersion: ${gitV}`

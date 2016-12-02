@@ -53,5 +53,5 @@ module.exports = {
   eslint: {
     formatter: require('eslint-friendly-formatter')
   },
-  postcss: [autoprefixer({browsers: ['last 2 versions']})],
+  postcss: [autoprefixer(config.autoprefixer)],
 }

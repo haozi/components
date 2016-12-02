@@ -3,13 +3,17 @@ const path = require('path')
 const fs = require('fs')
 const config = require('./index')
 const projectRoot = path.resolve(__dirname, '../')
-const rollup = require( 'rollup' )
+
+const postcss = require('postcss')
+const autoprefixer = require('autoprefixer')
+
+const rollup = require('rollup')
 const vue = require('rollup-plugin-vue')
 const less = require('rollup-plugin-less')
 const buble = require('rollup-plugin-buble')
 const uglify = require('rollup-plugin-uglify')
-const pkg = require('../package.json')
 
+const pkg = require('../package.json')
 
 const banner =
   '/*!\n' +
@@ -27,34 +31,35 @@ const banner =
     plugins: [
       vue({
         compileTemplate: false,
-        css: 'dist/index.css',
+        css: config.output_css,
         htmlMinifier: {
           minifyCSS: true,
           minifyJS: true,
-          "collapseBooleanAttributes": true,
-          "collapseWhitespace": true,
-          "decodeEntities": true,
+          collapseBooleanAttributes: true,
+          collapseWhitespace: true,
+          decodeEntities: true,
 
-          "html5": true,
-          "processConditionalComments": true,
-          "processScripts": [
-            "text/html"
+          html5: true,
+          processConditionalComments: true,
+          processScripts: [
+            'text/html'
           ],
-          "removeAttributeQuotes": true,
-          "removeComments": true,
-          "removeEmptyAttributes": true,
-          "removeOptionalTags": true,
-          "removeRedundantAttributes": true,
-          "removeScriptTypeAttributes": true,
-          "removeStyleLinkTypeAttributes": true,
-          "removeTagWhitespace": true,
-          "useShortDoctype": true,
+          removeAttributeQuotes: true,
+          removeComments: true,
+          removeEmptyAttributes: true,
+          removeOptionalTags: true,
+          removeRedundantAttributes: true,
+          removeScriptTypeAttributes: true,
+          removeStyleLinkTypeAttributes: true,
+          removeTagWhitespace: true,
+          useShortDoctype: true,
         }
       }),
       less({
         insert: false,
-        output: 'dist/index.css'
+        output: config.output_css
       }),
+      postcss([autoprefixer({browsers: ['last 2 versions']})]),
       buble(),
       options.minify && uglify({
         compress: {
@@ -90,9 +95,20 @@ const banner =
       moduleName: pkg.name
     })
     write(path.resolve(projectRoot, options.output), result.code)
+  }).then(() => {
+    let css = ''
+    try {
+      css = fs.readFileSync(config.output_css, 'utf8')
+    } catch (e) {
+      return
+    }
+    postcss([ autoprefixer(config.autoprefixer) ])
+      .process(css)
+      .then(function (result) {
+        write(path.resolve(projectRoot, config.output_css), result.css)
+      })
   })
 })
-
 
 function getSize(code) {
   return (code.length / 1024).toFixed(2) + 'kb'

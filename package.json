@@ -11,14 +11,14 @@
     "start": "npm run dev",
     "dev": "PORT=8080; npm run clean && webpack-dev-server --progress --config .config/webpack.dev.config.js --hot --inline --host 127.0.0.1 --port $PORT",
     "build": "NODE_ENV=production npm run clean && npm run lint && node .config/rollup.config.js",
-    "lint": "eslint --ext .js,.vue src test/*_spec.js",
+    "lint": "eslint --ext .js,.vue src .config .script test/*_spec.js",
     "test": "npm run build && nyc ava ./test/*_spec.js",
     "clean": "rm -rf dist .nyc_output coverage; mkdir dist",
     "prepublish": "npm run build"
   },
   "config": {
     "ghooks": {
-      "pre-commit": " NODE_ENV=production node .script/checkVersion.js && npm run lint && npm run test"
+      "pre-commit": "NODE_ENV=production node .script/checkVersion.js && npm run lint && npm run test"
     }
   },
   "author": "",
@@ -43,9 +43,9 @@
     "less-loader": "^2.2.3",
     "nyc": "^10.0.0",
     "postcss-loader": "^1.1.1",
-    "rollup-loader": "0.0.2",
+    "rollup-loader": "^0.0.2",
     "rollup-plugin-buble": "^0.14.0",
-    "rollup-plugin-less": "0.0.9",
+    "rollup-plugin-less": "^0.1.1",
     "rollup-plugin-uglify": "^1.0.1",
     "rollup-plugin-vue": "^2.2.10",
     "style-loader": "^0.13.1",
