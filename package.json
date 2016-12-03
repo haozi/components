@@ -10,7 +10,7 @@
   "scripts": {
     "start": "npm run dev",
     "dev": "PORT=8080; npm run clean && webpack-dev-server --progress --config .config/webpack.dev.config.js --hot --inline --host 127.0.0.1 --port $PORT",
-    "build": "NODE_ENV=production npm run clean && npm run lint && node .config/rollup.config.js",
+    "build": "npm run clean && NODE_ENV=production npm run lint && node .config/rollup.config.js",
     "lint": "eslint --ext .js,.vue src .config .script test/*_spec.js",
     "test": "npm run build && nyc ava ./test/*_spec.js",
     "clean": "rm -rf dist .nyc_output coverage; mkdir dist",
@@ -21,6 +21,11 @@
       "pre-commit": "NODE_ENV=production node .script/checkVersion.js && npm run lint && npm run test"
     }
   },
+  "ava": {
+    "require": [
+      "./test/helpers/setup-browser-env.js"
+    ]
+  },
   "author": "",
   "license": "MIT",
   "devDependencies": {
@@ -29,7 +34,8 @@
     "babel-eslint": "^7.1.1",
     "babel-plugin-transform-runtime": "^6.15.0",
     "babel-preset-es2015": "^6.18.0",
-    "css-loader": "^0.26.0",
+    "browser-env": "^2.0.16",
+    "css-loader": "^0.26.1",
     "eslint": "^3.11.1",
     "eslint-config-standard": "^6.2.1",
     "eslint-friendly-formatter": "^2.0.6",

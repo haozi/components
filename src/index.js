@@ -10,3 +10,5 @@ export default class {
     return Math.pow(a, b)
   }
 }
+
+document.body.appendChild(document.createTextNode('hello world'))

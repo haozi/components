@@ -16,11 +16,11 @@ const uglify = require('rollup-plugin-uglify')
 const pkg = require('../package.json')
 
 const banner =
-  '/*!\n' +
-  ' * ' + pkg.name + ' v' + pkg.version + '\n' +
-  ' * (c) ' + new Date().getFullYear() + ' ' + pkg.contributors.join(' ') + '\n' +
-  ' * Released under the ' + pkg.license + ' License.\n' +
-  ' */'
+`/*!
+ * ${pkg.name} v${pkg.version}
+ * &copy;copyright ${new Date().getFullYear()} ${pkg.contributors.join(' ')}
+ * Released under the ${pkg.license} License.
+ */`
 
 ;[
   {type: 'cjs', output: config.output},
