@@ -14,7 +14,7 @@
     "lint": "eslint --ext .js,.vue src .config .script test/*_spec.js",
     "test": "npm run build && nyc ava ./test/*_spec.js",
     "clean": "rm -rf dist .nyc_output coverage; mkdir dist",
-    "prepublish": "npm run build"
+    "prepublish": "npm run test"
   },
   "config": {
     "ghooks": {
