@@ -1,7 +1,7 @@
-import {add} from './util'
 import './style/style.less'
+import {add} from './util'
 
-export default class {
+export default class Components {
   add(a, b) {
     return add(a, b)
   }
