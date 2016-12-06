@@ -11,4 +11,7 @@ export default class {
   }
 }
 
-document.body.appendChild(document.createTextNode('hello world'))
+let hello = document.createElement('div')
+hello.classList.add('i-hello')
+hello.appendChild(document.createTextNode('hello world'))
+document.body.appendChild(hello)
