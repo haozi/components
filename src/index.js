@@ -1,5 +1,5 @@
 import {add} from './util'
-// import './style/style.less'
+import './style/style.less'
 
 export default class {
   add(a, b) {

@@ -8,6 +8,6 @@ module.exports = {
   output_css: './dist/index.css',
   output_css_min: './dist/index.min.css',
   autoprefixer: {
-    browsers: ['last 2 versions']
+    browsers: ['Android >= 4', 'iOS >=7', 'IE >= 9']
   }
 }
