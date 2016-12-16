@@ -36,3 +36,13 @@ npm run dev 会启动一个 http server,
 	```
 
 * 希望跳过部分文件检测，可配置 .eslintignore, 语法和 .gitignore 一致
+
+## 调试代码
+* 可以将调试代码写在 `process.env.NODE_ENV !== 'production'` 判断条件内，构建后会删除 e.g.
+
+```
+if (process.env.NODE_ENV !== 'production') {
+  console.log(...) // 里面的代码构建后会删除
+}
+
+```

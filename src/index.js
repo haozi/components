@@ -11,6 +11,10 @@ export default class Components {
   }
 }
 
+if (process.env.NODE_ENV !== 'production') {
+  console.warn('debug')
+}
+
 let hello = document.createElement('div')
 hello.classList.add('i-hello')
 hello.appendChild(document.createTextNode('hello world'))

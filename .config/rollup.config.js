@@ -1,4 +1,6 @@
 'use strict'
+process.env.NODE_ENV = 'production'
+
 const path = require('path')
 const fs = require('fs')
 const config = require('./index')
@@ -6,12 +8,14 @@ const projectRoot = path.resolve(__dirname, '../')
 
 const postcss = require('postcss')
 const autoprefixer = require('autoprefixer')
+const px2rem = require('postcss-px2rem')
 
 const rollup = require('rollup')
 const vue = require('rollup-plugin-vue')
 const less = require('rollup-plugin-less')
 const buble = require('rollup-plugin-buble')
 const uglify = require('rollup-plugin-uglify')
+const replace = require('rollup-plugin-replace')
 
 const pkg = require('../package.json')
 
@@ -29,6 +33,9 @@ const banner =
   rollup.rollup({
     entry: config.entry,
     plugins: [
+      replace({
+        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+      }),
       vue({
         compileTemplate: false,
         css: config.output_css,
@@ -102,7 +109,10 @@ const banner =
     } catch (e) {
       return
     }
-    postcss([ autoprefixer(config.autoprefixer) ])
+    postcss([
+      config.autoprefixer && autoprefixer(config.autoprefixer),
+      config.px2rem && px2rem(config.px2rem)
+    ].filter(Boolean))
       .process(css)
       .then(function (result) {
         write(path.resolve(projectRoot, config.output_css), result.css)

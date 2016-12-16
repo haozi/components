@@ -4,6 +4,8 @@ const path = require('path')
 const nodeDir = path.resolve(__dirname, '../node_modules')
 const projectRoot = path.resolve(__dirname, '../')
 const autoprefixer = require('autoprefixer')
+const webpack = require('webpack')
+const px2rem = require('postcss-px2rem')
 
 module.exports = {
   entry: config.browser,
@@ -45,6 +47,11 @@ module.exports = {
       loader: 'style!css?sourceMap!postcss!less?strictMath&noIeCompat&sourceMap'
     }]
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+    })
+  ],
   rollup: [
     require('rollup-plugin-buble')({
       exclude: 'node_modules/**',
@@ -53,5 +60,8 @@ module.exports = {
   eslint: {
     formatter: require('eslint-friendly-formatter')
   },
-  postcss: [autoprefixer(config.autoprefixer)],
+  postcss: [
+    config.autoprefixer && autoprefixer(config.autoprefixer),
+    config.px2rem && px2rem(config.px2rem)
+  ].filter(Boolean)
 }

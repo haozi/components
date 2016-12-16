@@ -8,6 +8,7 @@ module.exports = {
   output_css: './dist/index.css',
   output_css_min: './dist/index.min.css',
   autoprefixer: {
-    browsers: ['Android >= 4', 'iOS >= 7', 'IE >= 9', 'Firefox >= 50', 'Chrome >= 21']
-  }
+    browsers: ['Android >= 4', 'iOS >= 7', 'IE >= 9', 'Firefox >= 50', 'Chrome >= 21'],
+  },
+  // px2rem: {remUnit: 100, baseDpr: 1} // 开启后需在页面中加入 `!function (t) {t.style.fontSize = t.getBoundingClientRect().width / 3.75 + 'px'}(document.documentElement)`
 }
