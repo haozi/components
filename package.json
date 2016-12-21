@@ -9,7 +9,7 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "npm run dev",
-    "dev": "npm run clear && cross-env NODE_ENV=development webpack-dev-server --progress --config .config/webpack.dev.config.js --hot --inline --host 127.0.0.1 --port 8080",
+    "dev": "npm run clear && cross-env NODE_ENV=development webpack-dev-server --progress --config .config/webpack.dev.config.js --hot --inline --host 0.0.0.0 --port 8080",
     "build": "npm run clear && cross-env NODE_ENV=production npm run lint && node .config/rollup.config.js",
     "lint": "eslint --ext .js,.vue src .config .script test/*_spec.js",
     "test": "npm run build && nyc ava ./test/*_spec.js",
