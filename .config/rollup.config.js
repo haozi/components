@@ -17,12 +17,15 @@ const buble = require('rollup-plugin-buble')
 const uglify = require('rollup-plugin-uglify')
 const replace = require('rollup-plugin-replace')
 
+const nodeResolve = require('rollup-plugin-node-resolve')
+const commonjs = require('rollup-plugin-commonjs')
+
 const pkg = require('../package.json')
 
 const banner =
 `/*!
  * ${pkg.name} v${pkg.version}
- * &copy;copyright ${new Date().getFullYear()} ${pkg.contributors.join(' ')}
+ * @copyright ${new Date().getFullYear()} ${pkg.contributors.join(' ')}
  * Released under the ${pkg.license} License.
  */`
 
@@ -33,6 +36,18 @@ const banner =
   rollup.rollup({
     entry: config.entry,
     plugins: [
+      config.nodeResolve && nodeResolve({
+        jsnext: true,
+        main: true
+      }),
+      config.nodeResolve && commonjs({
+        include: 'node_modules/**',
+        extensions: [ '.js', '.coffee' ],
+        ignoreGlobal: false,
+        sourceMap: false
+        // namedExports: { './module.js': ['foo', 'bar'] } // Default: undefined
+      }),
+
       replace({
         'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
       }),
@@ -59,7 +74,7 @@ const banner =
           removeScriptTypeAttributes: true,
           removeStyleLinkTypeAttributes: true,
           removeTagWhitespace: true,
-          useShortDoctype: true,
+          useShortDoctype: true
         }
       }),
       less({
@@ -117,18 +132,20 @@ const banner =
       .then(function (result) {
         write(path.resolve(projectRoot, config.output_css), result.css)
       })
+  }).catch(e => {
+    console.error(e)
   })
 })
 
-function getSize(code) {
+function getSize (code) {
   return (code.length / 1024).toFixed(2) + 'kb'
 }
 
-function blue(str) {
+function blue (str) {
   return '\x1b[1m\x1b[34m' + str + '\x1b[39m\x1b[22m'
 }
 
-function write(dest, code) {
+function write (dest, code) {
   return new Promise(function (resolve, reject) {
     fs.writeFile(dest, code, function (err) {
       if (err) return reject(err)
