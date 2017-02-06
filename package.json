@@ -19,7 +19,7 @@
   },
   "config": {
     "ghooks": {
-      "pre-commit": "cross-env NODE_ENV=production node .script/checkVersion.js && npm run lint && npm run test && npm run clear && npm run fix",
+      "pre-commit": "cross-env NODE_ENV=production node .script/checkVersion.js && npm run lint && npm run test",
       "pre-push": "git status"
     }
   },
