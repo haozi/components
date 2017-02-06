@@ -9,16 +9,17 @@
   "main": "dist/index.js",
   "scripts": {
     "start": "npm run dev",
-    "dev": "npm run clear && cross-env NODE_ENV=development webpack-dev-server --progress --config .config/webpack.dev.config.js --hot --inline --host 0.0.0.0 --port 8080",
+    "dev": "npm run clear && npm run fix && cross-env NODE_ENV=development webpack-dev-server --progress --config .config/webpack.dev.config.js --hot --inline --host 0.0.0.0 --port 8080",
     "build": "npm run clear && cross-env NODE_ENV=production npm run lint && node .config/rollup.config.js",
     "lint": "eslint --ext .js,.vue src .config .script test/*_spec.js",
     "test": "npm run build && nyc ava ./test/*_spec.js",
     "clear": "rimraf dist .nyc_output coverage; mkdirp dist",
-    "prepublish": "npm run test"
+    "prepublish": "npm run test",
+    "fix": "standard src/**/*.js --fix && standard dist/index.js --fix  >/dev/null 2>&1"
   },
   "config": {
     "ghooks": {
-      "pre-commit": "cross-env NODE_ENV=production node .script/checkVersion.js && npm run lint && npm run test",
+      "pre-commit": "cross-env NODE_ENV=production node .script/checkVersion.js && npm run lint && npm run test && npm run clear && npm run fix",
       "pre-push": "git status"
     }
   },
@@ -62,11 +63,12 @@
     "rollup-plugin-replace": "^1.1.1",
     "rollup-plugin-uglify": "^1.0.1",
     "rollup-plugin-vue": "^2.2.10",
+    "safe-trim": "^1.0.11",
+    "standard": "^8.6.0",
     "style-loader": "^0.13.1",
     "webpack": "^1.13.3",
     "webpack-dev-server": "^1.16.2",
     "webpack-merge": "^1.0.2",
-    "webpack-notifier": "^1.4.1",
-    "safe-trim": "^1.0.11"
+    "webpack-notifier": "^1.4.1"
   }
 }

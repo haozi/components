@@ -1,7 +1,7 @@
-export function add(a, b) {
+export function add (a, b) {
   return a + b
 }
 
-export function hello() {
+export function hello () {
   console.log(hello)
 }

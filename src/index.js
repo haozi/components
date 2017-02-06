@@ -4,11 +4,11 @@ import nodeModule from 'safe-trim'
 
 console.log(nodeModule)
 export default class Components {
-  add(a, b) {
+  add (a, b) {
     return add(a, b)
   }
 
-  pow(a, b) {
+  pow (a, b) {
     return Math.pow(a, b)
   }
 }
