@@ -16,7 +16,7 @@ module.exports = {
   outputPath: outputPath,
   entry: 'src/index.js',
   output: `${outputPath}/${name}.js`,
-  outputCommon: `${outputPath}/${name}.common.js`,  
+  outputCommon: `${outputPath}/${name}.common.js`,
   // outputMin: `${outputPath}/${name}.min.js`,
   // outputCmd: `${outputPath}/${name}.cmd.js`,
   // outputMui: `${outputPath}/${name}.mui.js`,
