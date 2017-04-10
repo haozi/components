@@ -5,8 +5,6 @@ const projectRoot = path.resolve(__dirname, '../')
 const autoprefixer = require('autoprefixer')
 const webpack = require('webpack')
 const px2rem = require('postcss-px2rem')
-
-const pkg = require('../package.json')
 const config = require('./index')
 
 module.exports = {
@@ -56,7 +54,7 @@ module.exports = {
   ],
   rollup: [
     require('rollup-plugin-buble')({
-      exclude: 'node_modules/**',
+      exclude: 'node_modules/**'
     })
   ],
   eslint: {

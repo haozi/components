@@ -141,8 +141,9 @@ class Build {
 
   async genMui (common) {
     if (!this.config.outputMui) return
+    const dName = `${pkg.group}/${this.config.name.toLowerCase()}`
     this.muiMin = uglify(`
-      define('${pkg.group}/${this.config.name.toLowerCase()}/index.mui', function(require, exports, module) {
+      define('${dName}/index.mui', function(require, exports, module) {
         ${common}
       })
     `)
@@ -150,15 +151,16 @@ class Build {
       combine: true,
       modules: {},
       packages: {
-        [`${pkg.group}/${this.config.name.toLowerCase()}`]: {
+        [dName]: {
           debug: true,
           group: 'tm',
           ignorePackageNameInUri: true,
-          path: `//g.alicdn.com/${pkg.group}/${this.config.name.toLowerCase()}}/${pkg.version}/`,
+          path: `//g.alicdn.com/${dName}/${pkg.version}/`,
           version: pkg.version
         }
       }
     }
+    
     await Promise.all([
       write(this.config.outputMui, this.muiMin),
       write(`${this.config.outputPath}/seed.json`, JSON.stringify(seed)),
