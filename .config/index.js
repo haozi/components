@@ -16,9 +16,9 @@ module.exports = {
   outputPath: outputPath,
   entry: 'src/index.js',
   output: `${outputPath}/${name}.js`,
-  outputMin: `${outputPath}/${name}.min.js`,
-  outputCommon: `${outputPath}/${name}.common.js`,
-  outputCmd: `${outputPath}/${name}.cmd.js`,
+  outputCommon: `${outputPath}/${name}.common.js`,  
+  // outputMin: `${outputPath}/${name}.min.js`,
+  // outputCmd: `${outputPath}/${name}.cmd.js`,
   // outputMui: `${outputPath}/${name}.mui.js`,
   browser: 'test/browser.js',
   nodeResolve: true, // 是否把 node_modules 中的 js 也 inline, 默认 true
