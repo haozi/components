@@ -1,5 +1,8 @@
 import test from 'ava'
-import Components from '../dist/index.js'
+import path from 'path'
+import config from '../.config/index'
+console.log(config.output)
+const Components = require(path.resolve(__dirname, '../', config.output))
 
 test('log', t => {
   let c = new Components()

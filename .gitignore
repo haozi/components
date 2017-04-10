@@ -1,9 +1,8 @@
 .DS_Store
-node_modules/
-.idea/
-.vscode/
+node_modules
+.idea
+.vscode*
 *.log
-.nyc_output/
-coverage/
-
+.nyc_output
+coverage
 dist/

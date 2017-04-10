@@ -1,156 +1,167 @@
-'use strict'
 process.env.NODE_ENV = 'production'
-
-const path = require('path')
-const fs = require('fs')
-const config = require('./index')
-const projectRoot = path.resolve(__dirname, '../')
-
-const postcss = require('postcss')
-const autoprefixer = require('autoprefixer')
-const px2rem = require('postcss-px2rem')
-
 const rollup = require('rollup')
-const vue = require('rollup-plugin-vue')
-const less = require('rollup-plugin-less')
-const buble = require('rollup-plugin-buble')
-const uglify = require('rollup-plugin-uglify')
-const replace = require('rollup-plugin-replace')
+import {getConfig, getGzipSize, red, blue, write, uglify} from './util'
+import postcss from 'postcss'
+import autoprefixer from 'autoprefixer'
+import px2rem from 'postcss-px2rem'
+import vue from 'rollup-plugin-vue'
+import less from 'rollup-plugin-less'
+import buble from 'rollup-plugin-buble'
+import replace from 'rollup-plugin-replace'
+import nodeResolve from 'rollup-plugin-node-resolve'
+import commonjs from 'rollup-plugin-commonjs'
+import pkg from '../package.json'
 
-const nodeResolve = require('rollup-plugin-node-resolve')
-const commonjs = require('rollup-plugin-commonjs')
-
-const pkg = require('../package.json')
-
-const banner =
+class Build {
+  constructor () {
+    this.config = getConfig(require('./index'), pkg)
+    this.banner =
 `/*!
- * ${pkg.name} v${pkg.version}
+ * ${this.config.name} v${pkg.version}
  * @copyright ${new Date().getFullYear()} ${pkg.contributors.join(' ')}
  * Released under the ${pkg.license} License.
  */`
+    this._rollupConfig = {
+      entry: this.config.entry,
+      plugins: [
+        this.config.nodeResolve && nodeResolve({
+          jsnext: true,
+          main: true
+        }),
+        this.config.nodeResolve && commonjs({
+          include: 'node_modules/**',
+          extensions: [ '.js', '.coffee' ],
+          ignoreGlobal: false,
+          sourceMap: false
+        }),
 
-;[
-  {type: 'cjs', output: config.output},
-  config.output_min && {type: 'umd', output: config.output_min, minify: true}
-].filter(Boolean).forEach(options => {
-  rollup.rollup({
-    entry: config.entry,
-    plugins: [
-      config.nodeResolve && nodeResolve({
-        jsnext: true,
-        main: true
-      }),
-      config.nodeResolve && commonjs({
-        include: 'node_modules/**',
-        extensions: [ '.js', '.coffee' ],
-        ignoreGlobal: false,
-        sourceMap: false
-        // namedExports: { './module.js': ['foo', 'bar'] } // Default: undefined
-      }),
+        replace({
+          'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+        }),
 
-      replace({
-        'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
-      }),
-      vue({
-        compileTemplate: false,
-        css: config.output_css,
-        htmlMinifier: {
-          minifyCSS: true,
-          minifyJS: true,
-          collapseBooleanAttributes: true,
-          collapseWhitespace: true,
-          decodeEntities: true,
+        vue({
+          compileTemplate: false,
+          css: this.config.output_css,
+          htmlMinifier: {
+            minifyCSS: true,
+            minifyJS: true,
+            collapseBooleanAttributes: true,
+            collapseWhitespace: true,
+            decodeEntities: true,
 
-          html5: true,
-          processConditionalComments: true,
-          processScripts: [
-            'text/html'
-          ],
-          removeAttributeQuotes: true,
-          removeComments: true,
-          removeEmptyAttributes: true,
-          removeOptionalTags: true,
-          removeRedundantAttributes: true,
-          removeScriptTypeAttributes: true,
-          removeStyleLinkTypeAttributes: true,
-          removeTagWhitespace: true,
-          useShortDoctype: true
-        }
-      }),
-      less({
-        insert: false,
-        output: config.output_css
-      }),
-      postcss([autoprefixer({browsers: ['last 2 versions']})]),
-      buble(),
-      options.minify && uglify({
-        compress: {
-          warnings: false,
-          hoist_vars: true,
-          hoist_funs: true,
-          drop_debugger: true,
-          unused: true,
-          drop_console: true,
-          sequences: true,
-          conditionals: true,
-          booleans: true,
-          if_return: true,
-          join_vars: true,
-          screw_ie8: true,
-          comparisons: true,
-          evaluate: true,
-          loops: true,
-          cascade: true,
-          negate_iife: true
-        },
-        comments: false,
-        output: {
-          ascii_only: true
-        }
-      })
-    ].filter(Boolean)
-  }).then((bundle) => {
-    const result = bundle.generate({
-      banner: banner,
-      useStrict: false,
-      format: options.type,
-      moduleName: pkg.name
-    })
-    write(path.resolve(projectRoot, options.output), result.code)
-  }).then(() => {
-    let css = ''
-    try {
-      css = fs.readFileSync(config.output_css, 'utf8')
-    } catch (e) {
-      return
+            html5: true,
+            processConditionalComments: true,
+            processScripts: [
+              'text/html'
+            ],
+            removeAttributeQuotes: true,
+            removeComments: true,
+            removeEmptyAttributes: true,
+            removeOptionalTags: true,
+            removeRedundantAttributes: true,
+            removeScriptTypeAttributes: true,
+            removeStyleLinkTypeAttributes: true,
+            removeTagWhitespace: true,
+            useShortDoctype: true
+          }
+        }),
+
+        less({
+          insert: false,
+          output: this.config.output_css
+        }),
+
+        postcss([
+          autoprefixer(this.config.autoprefixer),
+          this.config.px2rem && px2rem(this.config.px2rem)
+        ].filter(Boolean)),
+
+        buble()
+      ].filter(Boolean)
     }
-    postcss([
-      config.autoprefixer && autoprefixer(config.autoprefixer),
-      config.px2rem && px2rem(config.px2rem)
-    ].filter(Boolean))
-      .process(css)
-      .then(function (result) {
-        write(path.resolve(projectRoot, config.output_css), result.css)
+  }
+
+  async run () {
+    try {
+      const bundle = await rollup.rollup(this._rollupConfig)
+      await Promise.all([
+        this.genCommon(bundle),
+        this.genUmd(bundle)
+      ])
+      await Promise.all([
+        this.genMin(this.umd),
+        this.genCmd(this.common),
+        this.genMui(this.common)
+      ])
+      const size = await getGzipSize(this.config.outputMin)
+      console.log(red('gzip:') + ' ' + blue(size))
+    } catch (e) {
+      console.error(red(e))
+    }
+  }
+
+  async genCommon (bundle) {
+    this.common = bundle.generate({
+      banner: this.banner,
+      useStrict: false,
+      format: 'cjs',
+      moduleName: this.config.name
+    }).code
+    this.config.outputCommon && await write(this.config.outputCommon, this.common)
+  }
+
+  async genUmd (bundle) {
+    this.umd = bundle.generate({
+      banner: this.banner,
+      useStrict: false,
+      format: 'umd',
+      moduleName: this.config.name
+    }).code
+    this.config.output && await write(this.config.output, this.umd)
+  }
+
+  async genMin (umd) {
+    if (!this.config.outputMin) return
+    this.min = uglify(umd)
+    await write(this.config.outputMin, this.min)
+  }
+
+  async genCmd (common) {
+    if (!this.config.outputCmd) return
+    this.cmdMin = uglify(`
+      define('${pkg.group}/${this.config.name.toLowerCase()}/${pkg.version}/index.cmd.js', function(require, exports, module) {
+        ${common}
       })
-  }).catch(e => {
-    console.error(e)
-  })
-})
+    `)
+    await write(this.config.outputCmd, this.cmdMin)
+  }
 
-function getSize (code) {
-  return (code.length / 1024).toFixed(2) + 'kb'
+  async genMui (common) {
+    if (!this.config.outputMui) return
+    this.muiMin = uglify(`
+      define('${pkg.group}/${this.config.name.toLowerCase()}/index.mui', function(require, exports, module) {
+        ${common}
+      })
+    `)
+    let seed = {
+      combine: true,
+      modules: {},
+      packages: {
+        [`${pkg.group}/${this.config.name.toLowerCase()}`]: {
+          debug: true,
+          group: 'tm',
+          ignorePackageNameInUri: true,
+          path: `//g.alicdn.com/${pkg.group}/${this.config.name.toLowerCase()}}/${pkg.version}/`,
+          version: pkg.version
+        }
+      }
+    }
+    await Promise.all([
+      write(this.config.outputMui, this.muiMin),
+      write(`${this.config.outputPath}/seed.json`, JSON.stringify(seed)),
+      write(`${this.config.outputPath}/seed.js`, uglify(`KISSY.config(${JSON.stringify(seed)})`))
+    ])
+  }
 }
 
-function blue (str) {
-  return '\x1b[1m\x1b[34m' + str + '\x1b[39m\x1b[22m'
-}
-
-function write (dest, code) {
-  return new Promise(function (resolve, reject) {
-    fs.writeFile(dest, code, function (err) {
-      if (err) return reject(err)
-      console.log(blue(dest) + ' ' + getSize(code))
-      resolve()
-    })
-  })
-}
+new Build().run()

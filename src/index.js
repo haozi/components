@@ -1,7 +1,6 @@
 import './style/style.less'
 import {add} from './util'
 import nodeModule from 'safe-trim'
-
 console.log(nodeModule)
 export default class Components {
   add (a, b) {

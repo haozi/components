@@ -1,5 +1,4 @@
 'use strict'
-const config = require('./index')
 const path = require('path')
 const nodeDir = path.resolve(__dirname, '../node_modules')
 const projectRoot = path.resolve(__dirname, '../')
@@ -7,10 +6,13 @@ const autoprefixer = require('autoprefixer')
 const webpack = require('webpack')
 const px2rem = require('postcss-px2rem')
 
+const pkg = require('../package.json')
+const config = require('./index')
+
 module.exports = {
-  entry: config.browser,
+  entry: './' + config.browser,
   output: {
-    filename: config.browser
+    filename: './' + config.browser
   },
   resolve: {
     extensions: ['', '.js', '.vue'],
