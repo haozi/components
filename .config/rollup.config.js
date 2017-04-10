@@ -93,8 +93,11 @@ class Build {
         this.genCmd(this.common),
         this.genMui(this.common)
       ])
-      const size = await getGzipSize(this.config.outputMin)
-      console.log(red('gzip:') + ' ' + blue(size))
+
+      if (this.config.outputMin) {
+        const size = await getGzipSize(this.config.outputMin)
+        console.log(red('gzip:') + ' ' + blue(size))
+      }
     } catch (e) {
       console.error(red(e))
     }
