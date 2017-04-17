@@ -86,7 +86,8 @@ class Build {
       const bundle = await rollup.rollup(this._rollupConfig)
       await Promise.all([
         this.genCommon(bundle),
-        this.genUmd(bundle)
+        this.genUmd(bundle),
+        this.genEs(bundle)
       ])
       await Promise.all([
         this.genMin(this.umd),
@@ -121,6 +122,16 @@ class Build {
       moduleName: this.config.name
     }).code
     this.config.output && await write(this.config.output, this.umd)
+  }
+
+  async genEs (bundle) {
+    this.es = bundle.generate({
+      banner: this.banner,
+      useStrict: false,
+      format: 'es',
+      moduleName: this.config.name
+    }).code
+    this.config.outputEs && await write(this.config.outputEs, this.es)
   }
 
   async genMin (umd) {

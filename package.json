@@ -7,7 +7,8 @@
   "contributors": [
     "{{author}}"
   ],
-  "main": "dist/index.js",
+  "main": "dist/{{name}}.js",
+  "module": "dist/{{name}}.es.js",
   "scripts": {
     "start": "npm run dev",
     "dev": "npm run clear && npm run fix && cross-env NODE_ENV=development webpack-dev-server --progress --config .config/webpack.dev.config.js --hot --inline --host 0.0.0.0 --port 8080",
